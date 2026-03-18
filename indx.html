@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pooja B N — Bioinformatics Analyst</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,300&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:15px;}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--bg4:#21262d;
+  --green:#3fb950;--green2:#56d364;--green3:#aff5b4;
+  --blue:#58a6ff;--blue2:#79c0ff;
+  --purple:#bc8cff;--yellow:#e3b341;--red:#ff7b72;
+  --orange:#ffa657;--cyan:#76e3ea;
+  --border:#30363d;--border2:#21262d;
+  --text:#c9d1d9;--text2:#8b949e;--text3:#6e7681;
+  --white:#f0f6fc;
+}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;overflow-x:hidden;cursor:none;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+::-webkit-scrollbar-thumb:hover{background:var(--green);}
+
+/* CURSOR */
+#cur{width:2px;height:18px;background:var(--green);position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);animation:blink 1s infinite;}
+#cur-ring{width:28px;height:28px;border:1px solid rgba(63,185,80,.4);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:left .12s ease,top .12s ease;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* NAV — terminal menubar */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;height:44px;gap:0;font-size:.72rem;}
+.nav-traffic{display:flex;gap:8px;margin-right:20px;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dot.r{background:#ff5f57;}.dot.y{background:#febc2e;}.dot.g{background:#28c840;}
+.nav-title{color:var(--text2);font-size:.72rem;flex:1;text-align:center;letter-spacing:.5px;}
+.nav-title span{color:var(--green);}
+.nav-links{display:flex;gap:0;}
+.nav-links a{font-size:.68rem;color:var(--text2);text-decoration:none;padding:0 14px;height:44px;display:flex;align-items:center;border-left:1px solid var(--border);transition:all .2s;letter-spacing:.5px;}
+.nav-links a:hover{background:var(--bg3);color:var(--green);}
+
+/* HERO — terminal window */
+#hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 40px 60px;position:relative;overflow:hidden;}
+.hero-scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;opacity:.4;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(63,185,80,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(63,185,80,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+.terminal-window{width:100%;max-width:920px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 0 60px rgba(63,185,80,.08),0 24px 80px rgba(0,0,0,.6);}
+.terminal-bar{background:var(--bg3);padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.terminal-dots{display:flex;gap:7px;}
+.terminal-dots span{width:12px;height:12px;border-radius:50%;}
+.terminal-dots span:nth-child(1){background:#ff5f57;}
+.terminal-dots span:nth-child(2){background:#febc2e;}
+.terminal-dots span:nth-child(3){background:#28c840;}
+.terminal-title{flex:1;text-align:center;font-size:.7rem;color:var(--text3);letter-spacing:1px;}
+.terminal-body{padding:28px 32px;min-height:420px;}
+.t-line{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:.82rem;line-height:1.6;}
+.t-prompt{color:var(--green);white-space:nowrap;flex-shrink:0;}
+.t-prompt .path{color:var(--blue);}
+.t-prompt .branch{color:var(--purple);}
+.t-cmd{color:var(--white);}
+.t-out{color:var(--text);padding-left:20px;font-size:.8rem;line-height:1.7;}
+.t-out.green{color:var(--green2);}
+.t-out.blue{color:var(--blue2);}
+.t-out.yellow{color:var(--yellow);}
+.t-out.purple{color:var(--purple);}
+.t-out.orange{color:var(--orange);}
+.t-out.cyan{color:var(--cyan);}
+.t-out.dim{color:var(--text2);}
+.t-spacer{height:12px;}
+.t-cursor{display:inline-block;width:8px;height:14px;background:var(--green);animation:blink 1s infinite;vertical-align:middle;margin-left:3px;}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-top:none;}
+.hstat{background:var(--bg2);padding:18px 20px;text-align:center;}
+.hstat-n{font-size:1.6rem;font-weight:700;color:var(--green);font-family:'JetBrains Mono',monospace;line-height:1;}
+.hstat-l{font-size:.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:2px;margin-top:6px;}
+
+/* SECTION SHARED */
+.sec{padding:80px 60px;}
+.sec.alt{background:var(--bg2);}
+.sec-header{display:flex;align-items:center;gap:14px;margin-bottom:48px;}
+.sec-num{font-size:.65rem;color:var(--text3);letter-spacing:2px;}
+.sec-title{font-size:1.4rem;font-weight:700;color:var(--white);letter-spacing:-.5px;}
+.sec-title .hl{color:var(--green);}
+.sec-line{flex:1;height:1px;background:var(--border);}
+.prompt-label{font-size:.72rem;color:var(--text2);margin-bottom:24px;display:flex;align-items:center;gap:8px;}
+.prompt-label::before{content:'$';color:var(--green);}
+
+/* GENOME BROWSER */
+.gbrowser{background:var(--bg);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:40px;}
+.gb-toolbar{background:var(--bg3);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.gb-tool-label{font-size:.62rem;color:var(--text2);letter-spacing:1px;}
+.gb-coord{font-size:.68rem;color:var(--cyan);background:var(--bg4);border:1px solid var(--border);padding:3px 10px;font-family:'JetBrains Mono',monospace;}
+.gb-btn{font-size:.62rem;color:var(--text2);background:var(--bg4);border:1px solid var(--border);padding:3px 10px;cursor:pointer;transition:all .2s;font-family:'JetBrains Mono',monospace;}
+.gb-btn:hover{border-color:var(--green);color:var(--green);}
+.gb-tracks{padding:0;}
+.gb-track{border-bottom:1px solid var(--border2);display:flex;}
+.gb-track:last-child{border-bottom:none;}
+.gb-track-label{width:130px;flex-shrink:0;background:var(--bg3);border-right:1px solid var(--border);padding:8px 12px;font-size:.6rem;color:var(--text2);display:flex;align-items:center;letter-spacing:.5px;}
+.gb-track-content{flex:1;height:36px;position:relative;overflow:hidden;}
+/* chromosome ruler */
+.chr-ruler{height:20px;background:var(--bg);display:flex;align-items:center;position:relative;overflow:hidden;}
+.chr-tick{position:absolute;top:0;bottom:0;width:1px;background:var(--border);}
+.chr-tick-label{position:absolute;top:3px;font-size:.52rem;color:var(--text3);transform:translateX(-50%);}
+/* coverage track */
+.cov-track{height:36px;background:var(--bg);position:relative;}
+.cov-bar{position:absolute;bottom:0;background:rgba(88,166,255,.6);transition:background .2s;}
+.cov-bar:hover{background:var(--blue2);}
+/* SNP track */
+.snp-track{height:36px;background:var(--bg);position:relative;}
+.snp-mark{position:absolute;top:50%;transform:translateY(-50%);width:3px;height:16px;border-radius:1px;cursor:pointer;transition:height .2s;}
+.snp-mark:hover{height:28px;}
+.snp-mark.syn{background:var(--green);}
+.snp-mark.mis{background:var(--yellow);}
+.snp-mark.non{background:var(--red);}
+.snp-mark.int{background:var(--blue);}
+/* gene track */
+.gene-track{height:36px;background:var(--bg);position:relative;}
+.gene-body{position:absolute;top:50%;transform:translateY(-50%);height:8px;background:var(--purple);border-radius:1px;}
+.gene-label{position:absolute;top:2px;font-size:.55rem;color:var(--purple);}
+.gene-exon{position:absolute;top:50%;transform:translateY(-50%);height:14px;background:var(--purple);border-radius:1px;}
+/* read track */
+.read-track{height:44px;background:var(--bg);position:relative;}
+.read-fwd{position:absolute;height:8px;background:rgba(88,166,255,.5);border-radius:1px;}
+.read-rev{position:absolute;height:8px;background:rgba(255,123,114,.4);border-radius:1px;}
+
+/* ABOUT — split terminal */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.term-panel{background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.term-panel-bar{background:var(--bg3);padding:8px 14px;border-bottom:1px solid var(--border);font-size:.62rem;color:var(--text2);display:flex;align-items:center;gap:8px;}
+.term-panel-bar .dot2{width:8px;height:8px;border-radius:50%;background:var(--border);}
+.term-panel-body{padding:20px;font-size:.78rem;line-height:1.9;}
+.kv{display:flex;gap:10px;margin-bottom:8px;}
+.kv-key{color:var(--blue);min-width:80px;flex-shrink:0;}
+.kv-sep{color:var(--text3);}
+.kv-val{color:var(--text);}
+.kv-val.green{color:var(--green2);}
+.kv-val.yellow{color:var(--yellow);}
+.kv-val.purple{color:var(--purple);}
+.kv-val.orange{color:var(--orange);}
+.t-comment{color:var(--text3);font-size:.72rem;margin:10px 0 6px;}
+
+/* SKILLS — file tree + tags */
+.skills-layout{display:grid;grid-template-columns:220px 1fr;gap:20px;}
+.file-tree{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:16px 0;font-size:.75rem;}
+.ft-dir{padding:6px 16px;color:var(--blue);display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .2s;}
+.ft-dir:hover{background:var(--bg3);}
+.ft-dir.active{background:var(--bg3);color:var(--blue2);}
+.ft-dir::before{content:'▸';font-size:.6rem;color:var(--text3);}
+.ft-dir.open::before{content:'▾';color:var(--green);}
+.ft-file{padding:4px 16px 4px 36px;color:var(--text2);display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .2s;font-size:.72rem;}
+.ft-file:hover{background:var(--bg3);color:var(--text);}
+.ft-file.active{background:var(--bg3);color:var(--green);}
+.ft-icon{font-size:.65rem;}
+.skills-panel{background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.sp-tabs{display:flex;border-bottom:1px solid var(--border);}
+.sp-tab{padding:9px 18px;font-size:.68rem;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.5px;}
+.sp-tab.active{color:var(--white);border-bottom-color:var(--green);}
+.sp-tab:hover{color:var(--text);}
+.sp-body{padding:20px;display:none;}
+.sp-body.active{display:block;}
+.skill-row{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+.skill-name{font-size:.75rem;color:var(--text);min-width:200px;}
+.skill-bar{flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.skill-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:2px;width:0;transition:width 1.4s cubic-bezier(.25,.46,.45,.94);}
+.skill-pct{font-size:.65rem;color:var(--text3);min-width:36px;text-align:right;}
+.tag-grid{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0;}
+.stag{font-size:.65rem;padding:4px 10px;border-radius:2px;letter-spacing:.5px;font-family:'JetBrains Mono',monospace;}
+.stag.g{background:rgba(63,185,80,.1);color:var(--green2);border:1px solid rgba(63,185,80,.25);}
+.stag.b{background:rgba(88,166,255,.1);color:var(--blue2);border:1px solid rgba(88,166,255,.25);}
+.stag.p{background:rgba(188,140,255,.1);color:var(--purple);border:1px solid rgba(188,140,255,.25);}
+.stag.y{background:rgba(227,179,65,.1);color:var(--yellow);border:1px solid rgba(227,179,65,.25);}
+.stag.c{background:rgba(118,227,234,.1);color:var(--cyan);border:1px solid rgba(118,227,234,.25);}
+
+/* NUMBERS */
+#numbers{background:var(--bg);padding:60px;}
+.num-term{background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.num-term-bar{background:var(--bg3);padding:10px 16px;border-bottom:1px solid var(--border);font-size:.68rem;color:var(--text2);}
+.num-term-bar span{color:var(--green);}
+.num-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
+.num-cell{background:var(--bg2);padding:32px 24px;text-align:center;transition:background .2s;cursor:default;}
+.num-cell:hover{background:var(--bg3);}
+.num-big{font-size:2.4rem;font-weight:700;color:var(--green);line-height:1;margin-bottom:8px;font-family:'JetBrains Mono',monospace;}
+.num-label{font-size:.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:2px;}
+.num-bar{height:2px;background:var(--border);margin-top:10px;position:relative;overflow:hidden;}
+.num-bar-fill{position:absolute;top:0;left:0;height:100%;background:var(--green);width:0;transition:width 1.2s ease;}
+
+/* EXPERIENCE — diff view */
+.diff-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.diff-header{background:var(--bg3);padding:10px 16px;border-bottom:1px solid var(--border);font-size:.68rem;color:var(--text2);display:flex;align-items:center;justify-content:space-between;}
+.diff-header span{color:var(--blue);}
+.diff-meta{display:flex;gap:20px;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--bg);}
+.diff-meta-item{font-size:.72rem;}
+.diff-meta-item .key{color:var(--text3);}
+.diff-meta-item .val{color:var(--yellow);}
+.diff-meta-item .val.green{color:var(--green2);}
+.acc-item{border-bottom:1px solid var(--border2);}
+.acc-item:last-child{border-bottom:none;}
+.acc-head{display:flex;align-items:center;gap:12px;padding:14px 20px;cursor:pointer;transition:background .2s;user-select:none;}
+.acc-head:hover{background:var(--bg3);}
+.acc-plus{width:16px;height:16px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text2);flex-shrink:0;transition:all .2s;}
+.acc-item.open .acc-plus{background:var(--green);border-color:var(--green);color:var(--bg);}
+.acc-title{font-size:.8rem;color:var(--text);font-weight:500;}
+.diff-tag{font-size:.58rem;padding:2px 7px;background:rgba(63,185,80,.1);color:var(--green);border:1px solid rgba(63,185,80,.2);margin-left:auto;}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.acc-item.open .acc-body{max-height:500px;}
+.diff-lines{padding:0 0 8px;}
+.diff-line{display:flex;gap:0;font-size:.76rem;line-height:1.7;}
+.diff-line .ln{min-width:36px;padding:1px 12px;color:var(--text3);border-right:1px solid var(--border2);text-align:right;background:var(--bg);user-select:none;font-size:.65rem;}
+.diff-line .code{padding:1px 16px;flex:1;}
+.diff-line.add .ln{background:rgba(63,185,80,.06);}
+.diff-line.add .code{background:rgba(63,185,80,.06);color:var(--green2);}
+.diff-line.add .code::before{content:'+ ';color:var(--green);}
+.diff-line.ctx .code{color:var(--text2);}
+.diff-line .hl-num{color:var(--yellow);font-weight:600;}
+.diff-line .hl-tool{color:var(--orange);}
+.diff-line .hl-kw{color:var(--purple);}
+
+/* PROJECTS — card grid */
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.pcard{background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:border-color .25s,transform .25s,box-shadow .25s;cursor:default;}
+.pcard:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 30px rgba(63,185,80,.1);}
+.pcard-top{padding:16px;border-bottom:1px solid var(--border2);}
+.pcard-num{font-size:.6rem;color:var(--text3);letter-spacing:2px;margin-bottom:10px;}
+.pcard-title{font-size:.88rem;font-weight:600;color:var(--white);margin-bottom:8px;line-height:1.3;}
+.pcard-desc{font-size:.74rem;color:var(--text2);line-height:1.7;}
+.pcard-bottom{padding:12px 16px;display:flex;flex-wrap:wrap;gap:6px;}
+.pcard:hover .pcard-desc{color:var(--text);}
+
+/* EDUCATION */
+.edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.edu-card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:border-color .25s;}
+.edu-card:hover{border-color:var(--green);}
+.edu-card-top{padding:20px;border-bottom:1px solid var(--border2);}
+.edu-lang{font-size:.6rem;color:var(--text3);letter-spacing:2px;margin-bottom:12px;}
+.edu-title{font-size:1rem;font-weight:600;color:var(--white);margin-bottom:6px;}
+.edu-sub{font-size:.75rem;color:var(--text2);margin-bottom:4px;}
+.edu-yr{font-size:.68rem;color:var(--text3);}
+.edu-card-bottom{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+.edu-grade{font-size:.75rem;color:var(--green);background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.2);padding:4px 12px;}
+.edu-badge{font-size:.62rem;color:var(--text3);}
+
+/* CONTACT */
+#contact{background:var(--bg);padding:80px 60px;text-align:center;}
+.ct-terminal{max-width:600px;margin:0 auto;}
+.ct-prompt{font-size:.8rem;color:var(--text2);margin-bottom:8px;text-align:left;}
+.ct-prompt .p{color:var(--green);}
+.ct-prompt .cmd{color:var(--white);}
+.ct-output{margin-bottom:32px;text-align:left;}
+.ct-title{font-size:2rem;font-weight:700;color:var(--white);margin-bottom:8px;}
+.ct-title .hl{color:var(--green);}
+.ct-sub{font-size:.88rem;color:var(--text);margin-bottom:40px;line-height:1.7;}
+.ct-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cc{background:var(--bg2);border:1px solid var(--border);padding:18px 20px;text-decoration:none;display:block;transition:all .25s;border-radius:4px;text-align:left;}
+.cc:hover{border-color:var(--green);background:var(--bg3);}
+.cc-l{font-size:.58rem;color:var(--text3);letter-spacing:2px;margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.cc-l::before{content:'>';color:var(--green);}
+.cc-v{font-size:.82rem;color:var(--text);font-weight:500;}
+.cc:hover .cc-v{color:var(--green2);}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:20px 60px;display:flex;justify-content:space-between;align-items:center;}
+.fc{font-size:.65rem;color:var(--text3);}
+.fn{font-size:.72rem;color:var(--text2);}
+.fn span{color:var(--green);}
+
+/* ANIMATIONS */
+@keyframes ri{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes typeIn{from{opacity:0}to{opacity:1}}
+.rv{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+.rv.up{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.06s}.d2{transition-delay:.12s}.d3{transition-delay:.18s}.d4{transition-delay:.24s}
+
+@media(max-width:900px){
+  nav{padding:0 12px;}
+  .nav-links a{padding:0 8px;font-size:.6rem;}
+  .sec{padding:60px 20px;}
+  #numbers{padding:40px 20px;}
+  #contact{padding:60px 20px;}
+  .about-grid,.skills-layout,.edu-grid{grid-template-columns:1fr;}
+  .num-grid{grid-template-columns:1fr 1fr;}
+  .proj-grid{grid-template-columns:1fr;}
+  .hero-stats{grid-template-columns:1fr 1fr;}
+  footer{padding:16px 20px;}
+  .ct-cards{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-traffic"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div>
+  <span class="nav-title">pooja@bioinformatics: <span>~/portfolio</span></span>
+  <div class="nav-links">
+    <a href="#about">about</a>
+    <a href="#skills">skills</a>
+    <a href="#numbers">stats</a>
+    <a href="#experience">exp</a>
+    <a href="#projects">projects</a>
+    <a href="#contact">contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-scanlines"></div>
+  <div class="hero-grid"></div>
+  <div style="width:100%;max-width:920px;">
+    <div class="terminal-window">
+      <div class="terminal-bar">
+        <div class="terminal-dots"><span></span><span></span><span></span></div>
+        <div class="terminal-title">bash — pooja@bioinformatics: ~/portfolio — 120×40</div>
+      </div>
+      <div class="terminal-body" id="termBody">
+        <div class="t-line"><span class="t-prompt"><span class="path">~/portfolio</span> <span class="branch">(main)</span> $</span><span class="t-cmd"> cat profile.json</span></div>
+        <div class="t-spacer"></div>
+        <div class="t-line"><span class="t-out">{</span></div>
+        <div class="t-line"><span class="t-out blue">&nbsp;&nbsp;"name"</span><span class="t-out">: </span><span class="t-out green">"Pooja B N"</span><span class="t-out">,</span></div>
+        <div class="t-line"><span class="t-out blue">&nbsp;&nbsp;"role"</span><span class="t-out">: </span><span class="t-out green">"Bioinformatics Analyst"</span><span class="t-out">,</span></div>
+        <div class="t-line"><span class="t-out blue">&nbsp;&nbsp;"location"</span><span class="t-out">: </span><span class="t-out green">"Bangalore, India"</span><span class="t-out">,</span></div>
+        <div class="t-line"><span class="t-out blue">&nbsp;&nbsp;"experience"</span><span class="t-out">: </span><span class="t-out yellow">"1.7 years"</span><span class="t-out">,</span></div>
+        <div class="t-line"><span class="t-out blue">&nbsp;&nbsp;"platforms"</span><span class="t-out">: [</span><span class="t-out purple">"Illumina WGS"</span><span class="t-out">, </span><span class="t-out purple">"Oxford Nanopore"</span><span class="t-out">, </span><span class="t-out purple">"ddRAD-seq"</span><span class="t-out">, </span><span class="t-out purple">"GBS"</span><span class="t-out">],</span></div>
+        <div class="t-line"><span class="t-out blue">&nbsp;&nbsp;"status"</span><span class="t-out">: </span><span class="t-out green">"available — immediate joiner"</span><span class="t-out">,</span></div>
+        <div class="t-line"><span class="t-out blue">&nbsp;&nbsp;"data_processed"</span><span class="t-out">: </span><span class="t-out yellow">"600+ GB"</span><span class="t-out">,</span></div>
+        <div class="t-line"><span class="t-out blue">&nbsp;&nbsp;"genomes_analyzed"</span><span class="t-out">: </span><span class="t-out yellow">1078</span><span class="t-out">,</span></div>
+        <div class="t-line"><span class="t-out blue">&nbsp;&nbsp;"snps_identified"</span><span class="t-out">: </span><span class="t-out yellow">"43,000,000+"</span><span class="t-out">,</span></div>
+        <div class="t-line"><span class="t-out blue">&nbsp;&nbsp;"contact"</span><span class="t-out">: </span><span class="t-out cyan">"poojabadru@gmail.com"</span></div>
+        <div class="t-line"><span class="t-out">}</span></div>
+        <div class="t-spacer"></div>
+        <div class="t-line"><span class="t-prompt"><span class="path">~/portfolio</span> <span class="branch">(main)</span> $</span><span class="t-cmd"> python3 run_analysis.py --samples 1078 --platform multi</span></div>
+        <div class="t-line"><span class="t-out green">✓ Loading reference genome... done</span></div>
+        <div class="t-line"><span class="t-out green">✓ Running variant calling pipeline (GATK)... done</span></div>
+        <div class="t-line"><span class="t-out green">✓ Processing 600+ GB NGS data... done</span></div>
+        <div class="t-line"><span class="t-out yellow">→ SNPs identified: 43,000,000+ | Indels: 9,300,000+</span></div>
+        <div class="t-line"><span class="t-out dim">→ Novel variants: 978 | Primers validated: 96</span></div>
+        <div class="t-spacer"></div>
+        <div class="t-line"><span class="t-prompt"><span class="path">~/portfolio</span> <span class="branch">(main)</span> $</span><span class="t-cursor"></span></div>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-n counter" data-val="600" data-suffix="+">0</div><div class="hstat-l">GB Processed</div></div>
+        <div class="hstat"><div class="hstat-n counter" data-val="1078" data-comma="1">0</div><div class="hstat-l">Genomes Analyzed</div></div>
+        <div class="hstat"><div class="hstat-n counter" data-val="43" data-suffix="M+">0</div><div class="hstat-l">SNPs Identified</div></div>
+        <div class="hstat"><div class="hstat-n counter" data-val="96">0</div><div class="hstat-l">Primers Validated</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="sec alt">
+  <div class="sec-header rv"><span class="sec-num">01</span><h2 class="sec-title">cat <span class="hl">about.txt</span></h2><div class="sec-line"></div></div>
+  <div class="about-grid">
+    <div class="term-panel rv">
+      <div class="term-panel-bar"><div class="dot2"></div><div class="dot2"></div><div class="dot2"></div>&nbsp;&nbsp;profile.sh</div>
+      <div class="term-panel-body">
+        <div class="t-comment"># Personal Details</div>
+        <div class="kv"><span class="kv-key">NAME</span><span class="kv-sep">=</span><span class="kv-val green">"Pooja B N"</span></div>
+        <div class="kv"><span class="kv-key">LOCATION</span><span class="kv-sep">=</span><span class="kv-val green">"Bangalore, India"</span></div>
+        <div class="kv"><span class="kv-key">EMAIL</span><span class="kv-sep">=</span><span class="kv-val green">"poojabadru@gmail.com"</span></div>
+        <div class="kv"><span class="kv-key">PHONE</span><span class="kv-sep">=</span><span class="kv-val green">"+91-9019906817"</span></div>
+        <div class="kv"><span class="kv-key">LINKEDIN</span><span class="kv-sep">=</span><span class="kv-val cyan">"linkedin.com/in/bnpooja"</span></div>
+        <div class="kv"><span class="kv-key">GITHUB</span><span class="kv-sep">=</span><span class="kv-val cyan">"github.com/biocoderep"</span></div>
+        <div class="t-comment" style="margin-top:16px;"># Current Status</div>
+        <div class="kv"><span class="kv-key">STATUS</span><span class="kv-sep">=</span><span class="kv-val yellow">"AVAILABLE"</span></div>
+        <div class="kv"><span class="kv-key">NOTICE</span><span class="kv-sep">=</span><span class="kv-val green">"Immediate Joiner"</span></div>
+        <div class="kv"><span class="kv-key">OPEN_TO</span><span class="kv-sep">=</span><span class="kv-val orange">"Bangalore, Hyderabad"</span></div>
+        <div class="t-comment" style="margin-top:16px;"># Unique Edge</div>
+        <div class="kv"><span class="kv-key">DRY_LAB</span><span class="kv-sep">=</span><span class="kv-val green">true</span></div>
+        <div class="kv"><span class="kv-key">WET_LAB</span><span class="kv-sep">=</span><span class="kv-val green">true</span></div>
+        <div class="kv"><span class="kv-key">END_TO_END</span><span class="kv-sep">=</span><span class="kv-val green">true</span></div>
+      </div>
+    </div>
+    <div class="term-panel rv d2">
+      <div class="term-panel-bar"><div class="dot2"></div><div class="dot2"></div><div class="dot2"></div>&nbsp;&nbsp;bio.md</div>
+      <div class="term-panel-body">
+        <div style="font-size:.8rem;color:var(--text);line-height:1.95;margin-bottom:16px;">Bioinformatics analyst with close to <span style="color:var(--green2);font-weight:600;">2 years</span> of focused experience in large-scale NGS data analysis, variant discovery, genome assembly, and pipeline engineering.</div>
+        <div style="font-size:.8rem;color:var(--text);line-height:1.95;margin-bottom:16px;">What sets me apart — I work <span style="color:var(--yellow);font-weight:600;">end-to-end</span>. Build automated pipelines in Python and Bash, run GATK variant discovery workflows, and then walk into the wet lab to physically validate results through PCR and gel electrophoresis. Very few analysts bridge both worlds.</div>
+        <div style="font-size:.8rem;color:var(--text);line-height:1.95;">Experienced across <span style="color:var(--purple);font-weight:600;">four NGS platforms</span> — Illumina WGS, Oxford Nanopore, ddRAD-seq and GBS. Delivered projects from raw sequencing QC all the way to experimentally confirmed molecular markers.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="sec">
+  <div class="sec-header rv"><span class="sec-num">02</span><h2 class="sec-title">ls -la <span class="hl">skills/</span></h2><div class="sec-line"></div></div>
+  <div class="skills-layout rv">
+    <div class="file-tree">
+      <div class="ft-dir open active" onclick="showSkill('ngs',this)">ngs_genomics/</div>
+      <div class="ft-file active" onclick="showSkill('ngs',this)"><span class="ft-icon">py</span>variant_calling.py</div>
+      <div class="ft-file" onclick="showSkill('ngs',this)"><span class="ft-icon">sh</span>assembly_pipe.sh</div>
+      <div class="ft-dir" onclick="showSkill('code',this)">programming/</div>
+      <div class="ft-file" onclick="showSkill('code',this)"><span class="ft-icon">py</span>pipeline.py</div>
+      <div class="ft-file" onclick="showSkill('code',this)"><span class="ft-icon">R</span>analysis.R</div>
+      <div class="ft-dir" onclick="showSkill('tools',this)">bioinf_tools/</div>
+      <div class="ft-file" onclick="showSkill('tools',this)"><span class="ft-icon">cfg</span>gatk.config</div>
+      <div class="ft-file" onclick="showSkill('tools',this)"><span class="ft-icon">sm</span>Snakefile</div>
+      <div class="ft-dir" onclick="showSkill('wetlab',this)">wet_lab/</div>
+      <div class="ft-file" onclick="showSkill('wetlab',this)"><span class="ft-icon">md</span>primers.md</div>
+      <div class="ft-dir" onclick="showSkill('db',this)">databases/</div>
+      <div class="ft-file" onclick="showSkill('db',this)"><span class="ft-icon">db</span>resources.txt</div>
+    </div>
+    <div class="skills-panel">
+      <div class="sp-tabs">
+        <div class="sp-tab active" onclick="switchTab('proficiency',this)">proficiency</div>
+        <div class="sp-tab" onclick="switchTab('tags',this)">all_tools</div>
+      </div>
+      <div class="sp-body active" id="tab-proficiency">
+        <div id="skill-content">
+          <div style="font-size:.65rem;color:var(--text3);margin-bottom:16px;letter-spacing:1px;"># ngs_genomics — select a file to explore</div>
+          <div class="skill-row"><span class="skill-name">NGS Data Analysis</span><div class="skill-bar"><div class="skill-fill" data-w="92"></div></div><span class="skill-pct">92%</span></div>
+          <div class="skill-row"><span class="skill-name">Variant Calling (GATK)</span><div class="skill-bar"><div class="skill-fill" data-w="90"></div></div><span class="skill-pct">90%</span></div>
+          <div class="skill-row"><span class="skill-name">Genome Assembly</span><div class="skill-bar"><div class="skill-fill" data-w="85"></div></div><span class="skill-pct">85%</span></div>
+          <div class="skill-row"><span class="skill-name">Pipeline Automation</span><div class="skill-bar"><div class="skill-fill" data-w="88"></div></div><span class="skill-pct">88%</span></div>
+          <div class="skill-row"><span class="skill-name">Python & Bash</span><div class="skill-bar"><div class="skill-fill" data-w="85"></div></div><span class="skill-pct">85%</span></div>
+          <div class="skill-row"><span class="skill-name">Wet Lab & Primer Validation</span><div class="skill-bar"><div class="skill-fill" data-w="80"></div></div><span class="skill-pct">80%</span></div>
+          <div class="skill-row"><span class="skill-name">R & Statistics</span><div class="skill-bar"><div class="skill-fill" data-w="75"></div></div><span class="skill-pct">75%</span></div>
+        </div>
+      </div>
+      <div class="sp-body" id="tab-tags">
+        <div style="font-size:.65rem;color:var(--text3);margin-bottom:14px;letter-spacing:1px;"># all skills — color coded by category</div>
+        <div class="tag-grid">
+          <span class="stag g">Illumina WGS</span><span class="stag g">Oxford Nanopore</span><span class="stag g">ddRAD-seq</span><span class="stag g">GBS</span><span class="stag g">SNP/Indel Calling</span><span class="stag g">Variant Annotation</span><span class="stag g">Genome Assembly</span><span class="stag g">RNA-seq</span><span class="stag g">DESeq2</span><span class="stag g">GO/KEGG</span>
+          <span class="stag b">Python</span><span class="stag b">Bash</span><span class="stag b">R</span><span class="stag b">Linux/Unix</span><span class="stag b">Git</span><span class="stag b">Snakemake</span><span class="stag b">Biopython</span><span class="stag b">pandas</span><span class="stag b">NumPy</span><span class="stag b">ggplot2</span>
+          <span class="stag p">GATK</span><span class="stag p">BWA</span><span class="stag p">SAMtools</span><span class="stag p">BCFtools</span><span class="stag p">VCFtools</span><span class="stag p">FastQC</span><span class="stag p">MultiQC</span><span class="stag p">HISAT2</span>
+          <span class="stag y">PCR Genotyping</span><span class="stag y">Tetra-ARMS PCR</span><span class="stag y">Primer Design</span><span class="stag y">qRT-PCR</span><span class="stag y">Gel Electrophoresis</span><span class="stag y">In-silico PCR</span><span class="stag y">DNA/RNA Isolation</span>
+          <span class="stag c">NCBI</span><span class="stag c">Ensembl</span><span class="stag c">UniProt</span><span class="stag c">KEGG</span><span class="stag c">Gene Ontology</span><span class="stag c">dbSNP</span><span class="stag c">PDB</span><span class="stag c">PubChem</span>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:16px;flex-wrap:wrap;">
+          <span style="font-size:.6rem;color:var(--text3);">■ <span style="color:var(--green2);">NGS/Genomics</span></span>
+          <span style="font-size:.6rem;color:var(--text3);">■ <span style="color:var(--blue2);">Programming</span></span>
+          <span style="font-size:.6rem;color:var(--text3);">■ <span style="color:var(--purple);">Tools</span></span>
+          <span style="font-size:.6rem;color:var(--text3);">■ <span style="color:var(--yellow);">Wet Lab</span></span>
+          <span style="font-size:.6rem;color:var(--text3);">■ <span style="color:var(--cyan);">Databases</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENOME BROWSER -->
+  <div class="gbrowser rv" style="margin-top:40px;">
+    <div class="gb-toolbar">
+      <span class="gb-tool-label">GENOME BROWSER</span>
+      <span class="gb-coord">Chr1:1,000,000–2,000,000</span>
+      <button class="gb-btn">◀ zoom out</button>
+      <button class="gb-btn">zoom in ▶</button>
+      <button class="gb-btn">SNP density</button>
+      <button class="gb-btn">coverage</button>
+      <span style="margin-left:auto;font-size:.6rem;color:var(--text3);">Pooja BN · 1,078 genomes · 43M SNPs</span>
+    </div>
+    <div class="gb-tracks">
+      <!-- Ruler -->
+      <div class="gb-track">
+        <div class="gb-track-label">RULER</div>
+        <div class="gb-track-content">
+          <div class="chr-ruler" id="rulerTrack"></div>
+        </div>
+      </div>
+      <!-- Coverage -->
+      <div class="gb-track">
+        <div class="gb-track-label">COVERAGE</div>
+        <div class="gb-track-content"><div class="cov-track" id="covTrack"></div></div>
+      </div>
+      <!-- SNPs -->
+      <div class="gb-track">
+        <div class="gb-track-label">SNP VARIANTS</div>
+        <div class="gb-track-content"><div class="snp-track" id="snpTrack"></div></div>
+      </div>
+      <!-- Gene -->
+      <div class="gb-track">
+        <div class="gb-track-label">GENE MODEL</div>
+        <div class="gb-track-content"><div class="gene-track" id="geneTrack"></div></div>
+      </div>
+      <!-- Reads -->
+      <div class="gb-track">
+        <div class="gb-track-label">NGS READS</div>
+        <div class="gb-track-content" style="height:44px;"><div class="read-track" id="readTrack"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<section id="numbers">
+  <div class="num-term rv">
+    <div class="num-term-bar">$ wc -l results.vcf &nbsp;|&nbsp; <span>stats_summary.py --all</span></div>
+    <div class="num-grid">
+      <div class="num-cell"><div class="num-big counter" data-val="600" data-suffix="+">0</div><div class="num-label">GB NGS Data</div><div class="num-bar"><div class="num-bar-fill" data-w="95"></div></div></div>
+      <div class="num-cell"><div class="num-big counter" data-val="1078" data-comma="1">0</div><div class="num-label">Genomes Analyzed</div><div class="num-bar"><div class="num-bar-fill" data-w="88"></div></div></div>
+      <div class="num-cell"><div class="num-big counter" data-val="43" data-suffix="M+">0</div><div class="num-label">SNPs Identified</div><div class="num-bar"><div class="num-bar-fill" data-w="100"></div></div></div>
+      <div class="num-cell"><div class="num-big counter" data-val="93" data-suffix="M" data-div="10">0</div><div class="num-label">Indels Discovered</div><div class="num-bar"><div class="num-bar-fill" data-w="82"></div></div></div>
+      <div class="num-cell"><div class="num-big counter" data-val="96">0</div><div class="num-label">Primers Validated</div><div class="num-bar"><div class="num-bar-fill" data-w="78"></div></div></div>
+      <div class="num-cell"><div class="num-big counter" data-val="10">0</div><div class="num-label">Genome Assemblies</div><div class="num-bar"><div class="num-bar-fill" data-w="70"></div></div></div>
+      <div class="num-cell"><div class="num-big">3.9Mb</div><div class="num-label">Best N50</div><div class="num-bar"><div class="num-bar-fill" data-w="85"></div></div></div>
+      <div class="num-cell"><div class="num-big counter" data-val="978">0</div><div class="num-label">Novel Variants</div><div class="num-bar"><div class="num-bar-fill" data-w="72"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" class="sec alt">
+  <div class="sec-header rv"><span class="sec-num">03</span><h2 class="sec-title">git log <span class="hl">--experience</span></h2><div class="sec-line"></div></div>
+  <div class="diff-wrap rv">
+    <div class="diff-header"><span>experience.diff</span><span style="color:var(--text3);font-size:.65rem;">+++ b/career/csb_research.py</span></div>
+    <div class="diff-meta">
+      <div class="diff-meta-item"><span class="key">role: </span><span class="val green">Bioinformatics Analyst</span></div>
+      <div class="diff-meta-item"><span class="key">org: </span><span class="val">CSB — Seri-biotechnological Research, Bangalore</span></div>
+      <div class="diff-meta-item"><span class="key">period: </span><span class="val">Aug 2024 – Feb 2026</span></div>
+      <div class="diff-meta-item"><span class="key">duration: </span><span class="val green">1.7 years</span></div>
+    </div>
+    <div class="acc-item open">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <div class="acc-plus">+</div>
+        <span class="acc-title">Variant Discovery & Large-Scale Genomics</span>
+        <span class="diff-tag">+3 commits</span>
+      </div>
+      <div class="acc-body">
+        <div class="diff-lines">
+          <div class="diff-line add"><div class="ln">1</div><div class="code">Processed <span class="hl-num">600+ GB</span> across Illumina WGS, Oxford Nanopore, ddRAD-seq, GBS via <span class="hl-tool">automated pipelines</span></div></div>
+          <div class="diff-line add"><div class="ln">2</div><div class="code">Analyzed <span class="hl-num">1,078 genomes</span> — identified <span class="hl-num">43M SNPs</span> + <span class="hl-num">9.3M indels</span> for breed authentication</div></div>
+          <div class="diff-line add"><div class="ln">3</div><div class="code">Discovered <span class="hl-num">978 novel variants</span> via chromosome-wise curation across <span class="hl-num">28 chromosomes</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <div class="acc-plus">+</div>
+        <span class="acc-title">Hybrid Genome Assembly</span>
+        <span class="diff-tag">+2 commits</span>
+      </div>
+      <div class="acc-body">
+        <div class="diff-lines">
+          <div class="diff-line add"><div class="ln">1</div><div class="code">Built reference assemblies for <span class="hl-num">10 breeds</span> — Illumina short reads + Nanopore long reads (hybrid)</div></div>
+          <div class="diff-line add"><div class="ln">2</div><div class="code">Achieved N50 of <span class="hl-num">3.9 Mb</span>, max contig <span class="hl-num">18.8 Mb</span> with full QC validation across all assemblies</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <div class="acc-plus">+</div>
+        <span class="acc-title">Pipeline Engineering & Automation</span>
+        <span class="diff-tag">+2 commits</span>
+      </div>
+      <div class="acc-body">
+        <div class="diff-lines">
+          <div class="diff-line add"><div class="ln">1</div><div class="code">Built <span class="hl-tool">Python</span> + <span class="hl-tool">Bash</span> pipelines processing <span class="hl-num">20+ samples in parallel</span> — fully reproducible, zero manual steps</div></div>
+          <div class="diff-line add"><div class="ln">2</div><div class="code">Modular chromosome-wise scripts with automated QC checkpoints using <span class="hl-tool">Snakemake</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <div class="acc-plus">+</div>
+        <span class="acc-title">Molecular Marker Development & Wet Lab Validation</span>
+        <span class="diff-tag">+3 commits</span>
+      </div>
+      <div class="acc-body">
+        <div class="diff-lines">
+          <div class="diff-line add"><div class="ln">1</div><div class="code">Designed + wet-lab validated <span class="hl-num">96 molecular marker primers</span> and <span class="hl-num">16 Tetra-ARMS PCR primer sets</span></div></div>
+          <div class="diff-line add"><div class="ln">2</div><div class="code">Extracted <span class="hl-num">30 indel-targeting primers</span> from WGS data — in-silico PCR then gel electrophoresis confirmed</div></div>
+          <div class="diff-line add"><div class="ln">3</div><div class="code">Validated <span class="hl-num">13 primer sets</span> end-to-end: computational design → PCR → gel electrophoresis</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <div class="acc-plus">+</div>
+        <span class="acc-title">Transcriptomics & Functional Analysis</span>
+        <span class="diff-tag">+2 commits</span>
+      </div>
+      <div class="acc-body">
+        <div class="diff-lines">
+          <div class="diff-line add"><div class="ln">1</div><div class="code">RNA-seq pipeline: <span class="hl-tool">HISAT2</span> alignment → <span class="hl-tool">DESeq2</span> diff. expression → GO/KEGG pathway enrichment</div></div>
+          <div class="diff-line add"><div class="ln">2</div><div class="code">Designed qRT-PCR primers with in-silico specificity checks for gene expression studies</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="sec">
+  <div class="sec-header rv"><span class="sec-num">04</span><h2 class="sec-title">ls <span class="hl">projects/</span> --details</h2><div class="sec-line"></div></div>
+  <div class="proj-grid rv">
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-num">// 01 population_genomics</div>
+        <div class="pcard-title">SNP Discovery — 1,078 Genome Dataset</div>
+        <div class="pcard-desc">43M SNPs and 9.3M indels from 600+ GB of multi-platform data. Chromosome-wise curation across 28 chromosomes — 978 novel variants found.</div>
+      </div>
+      <div class="pcard-bottom"><span class="stag p">GATK</span><span class="stag p">BCFtools</span><span class="stag p">VCFtools</span><span class="stag b">Python</span><span class="stag b">Bash</span></div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-num">// 02 genome_assembly</div>
+        <div class="pcard-title">Hybrid Assembly — 10 Breed References</div>
+        <div class="pcard-desc">Illumina + Nanopore hybrid strategy. N50 of 3.9 Mb and max contig 18.8 Mb with full QC validation across all assemblies.</div>
+      </div>
+      <div class="pcard-bottom"><span class="stag g">Oxford Nanopore</span><span class="stag g">Illumina WGS</span><span class="stag p">FastQC</span><span class="stag p">MultiQC</span></div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-num">// 03 pipeline_engineering</div>
+        <div class="pcard-title">Automated NGS Processing Pipeline</div>
+        <div class="pcard-desc">20+ samples in parallel. Modular chromosome-wise Snakemake workflows with automated QC checkpoints built entirely from scratch.</div>
+      </div>
+      <div class="pcard-bottom"><span class="stag b">Python</span><span class="stag b">Bash</span><span class="stag b">Snakemake</span><span class="stag b">Linux</span><span class="stag b">Git</span></div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-num">// 04 molecular_markers</div>
+        <div class="pcard-title">96-Primer Development & Validation</div>
+        <div class="pcard-desc">96 molecular marker primers + 16 Tetra-ARMS PCR sets. All validated in-silico first, then confirmed via wet lab gel electrophoresis.</div>
+      </div>
+      <div class="pcard-bottom"><span class="stag y">Primer Design</span><span class="stag y">Tetra-ARMS PCR</span><span class="stag y">In-silico PCR</span><span class="stag y">Wet Lab</span></div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-num">// 05 transcriptomics</div>
+        <div class="pcard-title">RNA-seq Differential Expression</div>
+        <div class="pcard-desc">HISAT2 alignment, DESeq2 differential expression, GO and KEGG pathway enrichment for complete biological interpretation.</div>
+      </div>
+      <div class="pcard-bottom"><span class="stag p">HISAT2</span><span class="stag p">DESeq2</span><span class="stag g">GO Enrichment</span><span class="stag g">KEGG</span><span class="stag b">R</span></div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-top">
+        <div class="pcard-num">// 06 breed_discrimination</div>
+        <div class="pcard-title">Indel-Based Breed Authentication</div>
+        <div class="pcard-desc">30 indel-targeting primers from WGS data. Full in-silico to in-vitro validation — structural variants confirmed via PCR and gel.</div>
+      </div>
+      <div class="pcard-bottom"><span class="stag g">WGS</span><span class="stag p">BWA</span><span class="stag p">SAMtools</span><span class="stag y">PCR</span><span class="stag y">Gel Electrophoresis</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education" class="sec alt">
+  <div class="sec-header rv"><span class="sec-num">05</span><h2 class="sec-title">cat <span class="hl">education.log</span></h2><div class="sec-line"></div></div>
+  <div class="edu-grid rv">
+    <div class="edu-card">
+      <div class="edu-card-top">
+        <div class="edu-lang">DEGREE</div>
+        <div class="edu-title">M.Sc. in Bioinformatics</div>
+        <div class="edu-sub">Karnataka State Akkamahadevi Women's University (KSAWU)</div>
+        <div class="edu-yr">Vijayapura &nbsp;·&nbsp; Graduated 2024</div>
+      </div>
+      <div class="edu-card-bottom">
+        <span class="edu-grade">CGPA: 8.0 / 10</span>
+        <span class="edu-badge">MSc_Bioinformatics.pdf</span>
+      </div>
+    </div>
+    <div class="edu-card">
+      <div class="edu-card-top">
+        <div class="edu-lang">TECH STACK</div>
+        <div class="edu-title">Platforms & Technologies</div>
+        <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:7px;">
+          <span class="stag g">Illumina WGS</span><span class="stag g">Oxford Nanopore</span><span class="stag g">ddRAD-seq</span><span class="stag g">GBS</span><span class="stag g">RNA-seq</span><span class="stag p">GATK</span><span class="stag b">Snakemake</span><span class="stag b">Python</span><span class="stag b">R</span><span class="stag b">Bash</span><span class="stag b">Linux</span><span class="stag p">SAMtools</span><span class="stag p">BWA</span><span class="stag p">DESeq2</span><span class="stag p">FastQC</span><span class="stag c">NCBI</span><span class="stag c">Ensembl</span><span class="stag c">KEGG</span>
+        </div>
+      </div>
+      <div class="edu-card-bottom">
+        <span class="edu-grade" style="color:var(--cyan);background:rgba(118,227,234,.1);border-color:rgba(118,227,234,.2);">18 technologies</span>
+        <span class="edu-badge">skills_verified ✓</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="ct-terminal rv">
+    <div class="ct-prompt"><span class="p">pooja@bioinformatics:~/portfolio$ </span><span class="cmd">./contact.sh --hire-me</span></div>
+    <div class="ct-output">
+      <div class="ct-title">Let's <span class="hl">Connect</span></div>
+      <div class="ct-sub">Actively looking for bioinformatics roles in Bangalore.<br>Open to Hyderabad. Available to join immediately.</div>
+    </div>
+    <div class="ct-cards">
+      <a href="mailto:poojabadru@gmail.com" class="cc"><span class="cc-l">EMAIL</span><div class="cc-v">poojabadru@gmail.com</div></a>
+      <a href="tel:+919019906817" class="cc"><span class="cc-l">PHONE</span><div class="cc-v">+91-9019906817</div></a>
+      <a href="https://linkedin.com/in/bnpooja" target="_blank" class="cc"><span class="cc-l">LINKEDIN</span><div class="cc-v">linkedin.com/in/bnpooja</div></a>
+      <a href="https://github.com/biocoderep" target="_blank" class="cc"><span class="cc-l">GITHUB</span><div class="cc-v">github.com/biocoderep</div></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fc">© 2026 · Pooja B N · Bioinformatics Analyst · Bangalore</div>
+  <div class="fn">pooja@bioinformatics:<span>~$</span></div>
+</footer>
+
+<script>
+/* CURSOR */
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+});
+(function loop(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+
+/* NAV SCROLL */
+window.addEventListener('scroll',()=>{
+  const nav=document.querySelector('nav');
+  nav.style.borderBottomColor=scrollY>60?'#30363d':'#30363d';
+});
+
+/* REVEAL */
+const io=new IntersectionObserver((es)=>es.forEach((e,i)=>{
+  if(e.isIntersecting){setTimeout(()=>e.target.classList.add('up'),i*70);io.unobserve(e.target);}
+}),{threshold:.06});
+document.querySelectorAll('.rv').forEach(r=>io.observe(r));
+
+/* COUNTERS */
+function animCounter(el){
+  const val=+el.dataset.val,suffix=el.dataset.suffix||'',comma=el.dataset.comma,div=el.dataset.div?+el.dataset.div:1;
+  const dur=1800,start=performance.now();
+  function step(now){
+    const p=Math.min((now-start)/dur,1),ease=1-Math.pow(1-p,4);
+    let v=div>1?(val*ease/div).toFixed(1):Math.round(val*ease);
+    el.textContent=(comma?Number(v).toLocaleString():v)+suffix;
+    if(p<1)requestAnimationFrame(step);
+    else{let f=div>1?(val/div).toFixed(1):(comma?Number(val).toLocaleString():val);el.textContent=f+suffix;}
+  }
+  requestAnimationFrame(step);
+}
+const cio=new IntersectionObserver((es)=>es.forEach(e=>{
+  if(e.isIntersecting){animCounter(e.target);cio.unobserve(e.target);}
+}),{threshold:.3});
+document.querySelectorAll('.counter').forEach(c=>cio.observe(c));
+
+/* SKILL BARS */
+const sbio=new IntersectionObserver(([e])=>{
+  if(e.isIntersecting){
+    document.querySelectorAll('.skill-fill').forEach(f=>f.style.width=f.dataset.w+'%');
+    sbio.unobserve(e.target);
+  }
+},{threshold:.2});
+const sbEl=document.querySelector('.skills-layout');
+if(sbEl)sbio.observe(sbEl);
+
+/* NUM BARS */
+const nbio=new IntersectionObserver(([e])=>{
+  if(e.isIntersecting){
+    document.querySelectorAll('.num-bar-fill').forEach(f=>f.style.width=f.dataset.w+'%');
+    nbio.unobserve(e.target);
+  }
+},{threshold:.2});
+const nbEl=document.querySelector('.num-grid');
+if(nbEl)nbio.observe(nbEl);
+
+/* ACCORDION */
+function toggleAcc(head){
+  const item=head.parentElement,wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.acc-item').forEach(i=>{i.classList.remove('open');i.querySelector('.acc-plus').textContent='+';});
+  if(!wasOpen){item.classList.add('open');head.querySelector('.acc-plus').textContent='−';}
+}
+
+/* SKILL TABS */
+function switchTab(name,btn){
+  document.querySelectorAll('.sp-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sp-body').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='proficiency'){
+    setTimeout(()=>document.querySelectorAll('.skill-fill').forEach(f=>f.style.width=f.dataset.w+'%'),100);
+  }
+}
+
+/* FILE TREE */
+function showSkill(cat,el){
+  document.querySelectorAll('.ft-dir,.ft-file').forEach(f=>f.classList.remove('active'));
+  el.classList.add('active');
+  // switch to proficiency tab when clicking file
+  document.querySelectorAll('.sp-tab')[0].click();
+}
+
+/* GENOME BROWSER — draw tracks */
+function buildBrowser(){
+  // Ruler ticks
+  const ruler=document.getElementById('rulerTrack');
+  if(!ruler)return;
+  const w=ruler.offsetWidth;
+  for(let i=0;i<=10;i++){
+    const pct=i*10;
+    const tick=document.createElement('div');
+    tick.className='chr-tick';
+    tick.style.left=pct+'%';
+    ruler.appendChild(tick);
+    const lbl=document.createElement('div');
+    lbl.className='chr-tick-label';
+    lbl.style.left=pct+'%';
+    lbl.textContent=(1000000+i*100000).toLocaleString();
+    ruler.appendChild(lbl);
+  }
+  // Coverage bars
+  const cov=document.getElementById('covTrack');
+  for(let i=0;i<60;i++){
+    const bar=document.createElement('div');
+    bar.className='cov-bar';
+    bar.style.left=(i/60*100)+'%';
+    bar.style.width=(1/60*100-.2)+'%';
+    bar.style.height=(20+Math.random()*14)+'px';
+    cov.appendChild(bar);
+  }
+  // SNPs
+  const snp=document.getElementById('snpTrack');
+  const types=['syn','mis','non','int'];
+  for(let i=0;i<40;i++){
+    const mark=document.createElement('div');
+    mark.className='snp-mark '+types[Math.floor(Math.random()*types.length)];
+    mark.style.left=(Math.random()*96+1)+'%';
+    mark.title='SNP variant';
+    snp.appendChild(mark);
+  }
+  // Gene
+  const gene=document.getElementById('geneTrack');
+  const gb=document.createElement('div');
+  gb.className='gene-body';
+  gb.style.left='10%';gb.style.width='70%';
+  gene.appendChild(gb);
+  const glbl=document.createElement('div');
+  glbl.className='gene-label';
+  glbl.style.left='10%';
+  glbl.textContent='BmNGS_gene_1';
+  gene.appendChild(glbl);
+  [15,25,40,55,65,75].forEach(p=>{
+    const ex=document.createElement('div');
+    ex.className='gene-exon';
+    ex.style.left=p+'%';ex.style.width='7%';
+    gene.appendChild(ex);
+  });
+  // Reads
+  const reads=document.getElementById('readTrack');
+  for(let i=0;i<25;i++){
+    const r=document.createElement('div');
+    r.className=Math.random()>.5?'read-fwd':'read-rev';
+    const left=Math.random()*85;
+    r.style.left=left+'%';
+    r.style.width=(8+Math.random()*10)+'%';
+    r.style.top=(Math.random()>.5?6:24)+'px';
+    reads.appendChild(r);
+  }
+}
+buildBrowser();
+</script>
+</body>
+</html>
