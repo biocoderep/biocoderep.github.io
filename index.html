@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>pooja@biocoderep — Terminal Portfolio</title>
+<meta name="description" content="The portfolio of Pooja B N, bioinformatics engineer — as a terminal. Type 'help', or run 'nextflow run pooja'.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://biocoderep.github.io/">
+<meta property="og:title" content="pooja@biocoderep:~$ — a terminal portfolio">
+<meta property="og:description" content="Pooja B N, bioinformatics engineer. Try: nextflow run pooja">
+<meta property="og:image" content="https://biocoderep.github.io/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23fbfaf6' stroke='%231a2238' stroke-width='4'/%3E%3Cpath d='M16 22l12 10-12 10' fill='none' stroke='%230f766e' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='32' y='40' width='16' height='5' rx='2' fill='%23c2410c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --desk: #efece4;
+    --term: #fbfaf6;
+    --chrome: #f1eee7;
+    --ink: #1a2238;
+    --text: #2b3142;
+    --muted: #7a8193;
+    --faint: #b3b6bf;
+    --line: #e2ded4;
+    --green: #0f766e;
+    --blue: #2f62a3;
+    --orange: #c2410c;
+    --gold: #a16207;
+    --red: #b4473a;
+    --sel: #fde7da;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    --sans: Inter, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { background: var(--desk); color: var(--text); font: 14px/1.55 var(--sans); -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; }
+  a { color: var(--blue); }
+  ::selection { background: var(--sel); color: var(--ink); }
+
+  .top { max-width: 1020px; width: 100%; margin: 0 auto; padding: 18px 20px 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .top .who { font: 600 15px var(--sans); color: var(--ink); }
+  .top .who span { font-weight: 400; color: var(--muted); }
+  .top nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .top nav a { font-size: 13px; font-weight: 500; text-decoration: none; color: var(--ink); padding: 6px 12px; border: 1px solid var(--line); background: #fff; border-radius: 7px; }
+  .top nav a:hover { border-color: var(--ink); }
+
+  /* ---------- window ---------- */
+  .window { max-width: 1020px; width: calc(100% - 40px); margin: 0 auto; flex: 1 1 auto; min-height: 460px; max-height: 780px; display: flex; flex-direction: column;
+            background: var(--term); border: 1px solid #d9d4c8; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 1px 0 rgba(26,34,56,.04), 0 30px 60px -30px rgba(26,34,56,.35), 0 10px 20px -12px rgba(26,34,56,.12); }
+  .titlebar { flex: 0 0 auto; height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 14px; background: var(--chrome); border-bottom: 1px solid var(--line); position: relative; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.r { background: #ec6a5e; } .dot.y { background: #f4bf4f; } .dot.g { background: #61c554; }
+  .titlebar .title { position: absolute; left: 0; right: 0; text-align: center; font: 500 12.5px var(--mono); color: var(--muted); pointer-events: none; }
+  .titlebar .tabs { margin-left: auto; font: 11.5px var(--mono); color: var(--muted); }
+
+  .screen { flex: 1 1 auto; overflow-y: auto; padding: 16px 20px 20px; font: 14px/1.6 var(--mono); color: var(--text); cursor: text; font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; overscroll-behavior: contain; }
+  .screen::-webkit-scrollbar { width: 10px; } .screen::-webkit-scrollbar-thumb { background: #e0dccf; border-radius: 10px; border: 2px solid var(--term); }
+  .line { white-space: pre-wrap; word-break: break-word; min-height: 1.6em; }
+  .prompt-line { margin-top: 10px; }
+  .screen > .prompt-line:first-child { margin-top: 0; }
+  .banner { font: 700 22px/1.0 var(--mono); letter-spacing: 1px; color: var(--orange); font-weight: 700; margin: 2px 0 4px; }
+  .barblk { display: inline-block; height: .8em; background: var(--green); border-radius: 2px; vertical-align: -1px; margin-right: 8px; }
+  .prompt-line { display: flex; flex-wrap: wrap; align-items: baseline; }
+  .ps1 { white-space: pre; }
+  .u { color: var(--green); font-weight: 700; } .h { color: var(--green); } .p { color: var(--blue); font-weight: 500; } .dollar { color: var(--ink); }
+  .typed { color: var(--ink); white-space: pre-wrap; word-break: break-all; }
+  .input-wrap { flex: 1 1 120px; position: relative; min-width: 80px; display: flex; }
+  #cmd { width: 100%; border: 0; outline: 0; background: transparent; font: inherit; color: var(--ink); caret-color: var(--orange); padding: 0; }
+  .ghost { position: absolute; left: 0; top: 0; color: var(--faint); pointer-events: none; white-space: pre; overflow: hidden; }
+
+  .m { color: var(--muted); } .f { color: var(--faint); } .b { font-weight: 700; color: var(--ink); }
+  .g { color: var(--green); } .bl { color: var(--blue); } .o { color: var(--orange); } .gd { color: var(--gold); } .rd { color: var(--red); }
+  .A { color: #2f7d5b; font-weight: 700; } .C { color: var(--blue); font-weight: 700; } .G { color: var(--gold); font-weight: 700; } .T { color: var(--red); font-weight: 700; }
+  .cmd { color: var(--orange); cursor: pointer; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }
+  .cmd:hover { text-decoration-style: solid; }
+  .hl { background: var(--sel); color: var(--ink); border-radius: 2px; }
+  .dir { color: var(--blue); font-weight: 700; cursor: pointer; }
+  .file { color: var(--ink); cursor: pointer; }
+  .file:hover, .dir:hover { text-decoration: underline; }
+  .tbl { display: grid; grid-template-columns: max-content 1fr; gap: 0 22px; }
+  .neo { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; margin: 4px 0; }
+  .neo pre { font: inherit; line-height: 1.32; }
+  .bar { color: var(--green); }
+  .blocks span { display: inline-block; width: 22px; height: 12px; margin-right: 4px; border-radius: 2px; vertical-align: middle; }
+  a.t { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
+
+  .chips { max-width: 1020px; width: 100%; margin: 0 auto; padding: 12px 20px 8px; display: flex; flex-wrap: wrap; gap: 7px; align-items: center; font-size: 12.5px; color: var(--muted); }
+  .chips button { font: 12.5px var(--mono); color: var(--ink); background: #fff; border: 1px solid var(--line); padding: 5px 11px; border-radius: 99px; cursor: pointer; }
+  .chips button:hover { border-color: var(--orange); color: var(--orange); }
+  .chips button.hot { border-color: var(--orange); color: var(--orange); background: #fff8f3; }
+  footer { max-width: 1020px; width: 100%; margin: 0 auto; padding: 4px 20px 18px; font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+
+  @media (max-width: 640px) {
+    .top { padding: 12px 12px 10px; } .window { width: calc(100% - 16px); min-height: 70vh; border-radius: 10px; }
+    .screen { padding: 12px 12px 16px; font-size: 12.5px; } .titlebar .tabs { display: none; } .titlebar .title { font-size: 11px; }
+    .chips { padding: 10px 10px 6px; } footer { padding: 4px 10px 14px; }
+    .tbl { grid-template-columns: 1fr; } .nfdesc { display: none; } .titlebar .title { left: 70px; right: 8px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .banner { font-size: 20px; } .tbl > :nth-child(odd) { margin-top: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="who">Pooja B N <span>· bioinformatics engineer · terminal edition</span></div>
+  <nav>
+    <a href="https://github.com/biocoderep" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://linkedin.com/in/bnpooja" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="mailto:poojabadru@gmail.com">Email</a>
+  </nav>
+</div>
+
+<div class="window" id="win">
+  <div class="titlebar">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <div class="title">pooja@biocoderep: ~ — bash — 80×24</div>
+    <span class="tabs">⌘ type “help”</span>
+  </div>
+  <div class="screen" id="screen" role="log" aria-live="polite"></div>
+</div>
+
+<div class="chips" id="chips">Quick commands:</div>
+
+<footer>
+  <span>© 2026 Pooja B N · Bengaluru, India</span>
+  <span>Every fact here comes from the CV. Tip: <b>Tab</b> completes, <b>↑ ↓</b> scroll history.</span>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========================================================
+     CONTENT
+     ========================================================= */
+  var EMAIL = "poojabadru@gmail.com", GH = "https://github.com/biocoderep", LI = "https://linkedin.com/in/bnpooja";
+
+  var PROJECTS = {
+    "g4-watch": {
+      name: "G4-WATCH", tag: "G-quadruplex surveillance framework for livestock viruses", stack: "Python · Docker · CI/CD", where: "ICAR-NIVEDI",
+      body: [
+        "Tests whether G-quadruplex loci in livestock-virus genomes are under strong enough",
+        "evolutionary selection to serve as early-warning surveillance signals.",
+        "",
+        "pathogens   13 configurations: FMDV, PPRV, LSDV, ASFV, BTV, RABV, NDV, CSFV, BVDV, PRRSV, ...",
+        "tests       1,322 automated · 89%+ coverage",
+        "containers  12 Docker images · full CI/CD pipeline",
+        "real data   FMDV 936 genomes · RABV 532 · SARS-CoV-2 112 (NCBI)"
+      ],
+      bars: [["FMDV", 936], ["RABV", 532], ["SARS-CoV-2", 112]]
+    },
+    "pathogvi": {
+      name: "PathoGVI", tag: "Genomic Virulence Index Calculator", stack: "Java · Maven · Docker · CLI + Web", where: "ICAR-NIVEDI",
+      body: [
+        "Scores a pathogen sequence alignment on 9 indices, then combines them into a weighted",
+        "composite:  GVI = Σ wᵢ · x̂ᵢ",
+        "",
+        "indices     evolutionary rate, reproduction number, nucleotide diversity, mutation burden,",
+        "            dN/dS, genetic distance, codon adaptation, GC deviation, recombination",
+        "traceable   every report shows each index's raw, normalised and weighted value",
+        "consistent  CLI and web share one pipeline: same input, same score",
+        "quality     ~89% line coverage (JaCoCo) · 13-check offline self-test · Dockerised",
+        "validated   avian influenza HA alignments matched published evolutionary and selection estimates",
+        "applied     Kyasanur Forest Disease virus (tick-borne flavivirus, Karnataka)"
+      ]
+    },
+    "vetgenomehub": {
+      name: "VetGenomeHub", tag: "Nanopore genomic surveillance platform", stack: "Python · FastAPI · Nextflow DSL2 · Apptainer", where: "ICAR-NIVEDI",
+      body: [
+        "Lets the team run Oxford Nanopore analysis (QC, assembly, variant calling, AMR profiling)",
+        "through a browser, with no terminal required. (Yes, the irony is noted.)",
+        "",
+        "adapters    20+ tool adapters",
+        "pipeline    18-step dual-track pipeline",
+        "backend     FastAPI + job queue + SQLite state tracking for long-running jobs",
+        "runtime     Nextflow DSL2, every tool in its own pinned container",
+        "module      MGE-SIFT (see: project mge-sift)"
+      ]
+    },
+    "mge-sift": {
+      name: "MGE-SIFT", tag: "Mobile genetic elements × AMR", stack: "module of VetGenomeHub", where: "ICAR-NIVEDI",
+      body: [
+        "Detects mobile genetic elements in bacterial genomes and flags the AMR genes carried",
+        "on them, with a confidence score for each call."
+      ]
+    }
+  };
+
+  var JOBS = {
+    "icar-nivedi": {
+      title: "Young Professional-II, Bioinformatics", org: "ICAR-NIVEDI, Bengaluru", when: "May 2024 – present",
+      body: ["Built a bacterial genomics HPC workflow now covering 468 genomes from 33 countries.",
+             "Developed four research tools the team uses every day: G4-WATCH, PathoGVI, VetGenomeHub, MGE-SIFT."]
+    },
+    "csb-isbr": {
+      title: "Junior Research Fellow, Bioinformatics Analyst", org: "CSB – Institute for Seri-biotechnological Research, Bengaluru", when: "Aug 2024 – Feb 2026",
+      body: ["Processed 600+ Gbp of Illumina, Oxford Nanopore, ddRAD-seq and GBS data across 1,078 genomes",
+             "  with Snakemake and Nextflow DSL2. Called ~43 M SNPs and 9.3 M indels.",
+             "Split variant calling across all 28 chromosomes so 20+ samples ran at once. Setting",
+             "  memory per rule stopped jobs from failing silently on large chromosomes.",
+             "Produced hybrid de novo assemblies for 10 breeds: contig N50 up to 3.9 Mb, longest 18.8 Mb.",
+             "Designed 96 marker primers and 16 Tetra-ARMS PCR assay sets, and wrote the lab's SOP."]
+    }
+  };
+
+  var SKILLS = [
+    ["programming", "Python (advanced), Bash (advanced), Java (proficient), SQL, R (ggplot2, DESeq2)"],
+    ["workflows", "Nextflow DSL2 (advanced), Snakemake (advanced), Docker, Apptainer/BioContainers, Conda/Mamba, Git/GitHub, CI/CD"],
+    ["computing", "Linux/Unix (advanced), HPC/Slurm (proficient), WSL2, memory-aware parallelisation"],
+    ["ngs_qc", "FastQC, MultiQC, fastp, NanoPlot, Porechop_ABI, chopper, Filtlong, Kraken2, KneadData"],
+    ["alignment_variants", "BWA-MEM, minimap2, Bowtie2, SAMtools, BCFtools, VCFtools, GATK HaplotypeCaller, Snippy, Clair3, Sniffles2"],
+    ["assembly", "SPAdes, Shovill, Flye, Medaka, QUAST; hybrid short/long-read assembly and polishing"],
+    ["amr_typing", "AMRFinderPlus, CARD/RGI, ABRicate, ResFinder, VFDB, MLST"],
+    ["phylogenetics", "MAFFT, MUSCLE, IQ-TREE, FastTree, BEAST2, TempEst, BaTS, PhiPack; dN/dS, nucleotide diversity"],
+    ["statistics", "Firth penalised logistic regression, population-structure correction, hypothesis testing"],
+    ["backend_data", "FastAPI (proficient), REST APIs, SQLite, PostgreSQL, Celery/Redis; NCBI, PubMLST"]
+  ];
+
+  var ABOUT = [
+    "Hi, I'm Pooja B N, a bioinformatics engineer in Bengaluru, India.",
+    "",
+    "I have two years of hands-on experience in NGS analysis and pipeline development for",
+    "bacterial and viral genomes. I write production-level Python, Java and Bash, and I package",
+    "everything in Nextflow DSL2 or Snakemake with Docker containers, so the same input gives",
+    "the same result on any machine.",
+    "",
+    "Currently: building surveillance tools for livestock pathogens at ICAR-NIVEDI.",
+    "Open to:   bioinformatics engineering roles and genomics research collaborations."
+  ];
+
+  /* virtual filesystem: each file renders through a function */
+  var FS = {
+    "~": { type: "dir", children: ["about.txt", "projects", "experience", "skills.yaml", "education.txt", "contact.vcf", "README.md"] },
+    "~/projects": { type: "dir", children: ["g4-watch.md", "pathogvi.md", "vetgenomehub.md", "mge-sift.md"] },
+    "~/experience": { type: "dir", children: ["icar-nivedi.log", "csb-isbr.log"] }
+  };
+  function fileText(path) {
+    var f = path.replace(/^~\//, "");
+    if (f === "about.txt") return ABOUT;
+    if (f === "README.md") return ["# pooja@biocoderep", "", "Type `help` to see what you can do here.", "Fastest tour: `neofetch`, `projects`, `nextflow run pooja`."];
+    if (f === "education.txt") return ["M.Sc. Bioinformatics", "Karnataka State Akkamahadevi Women's University (KSAWU), Vijayapura", "CGPA 8.00 / 10"];
+    if (f === "contact.vcf") return ["BEGIN:VCARD", "FN:Pooja B N", "TITLE:Bioinformatics Engineer", "ADR:;;Bengaluru;Karnataka;;;India", "EMAIL:" + EMAIL, "URL:" + GH, "URL:" + LI, "END:VCARD"];
+    if (f === "skills.yaml") return SKILLS.map(function (s) { return s[0] + ": " + s[1]; });
+    var m = f.match(/^projects\/(.+)\.md$/); if (m && PROJECTS[m[1]]) { var p = PROJECTS[m[1]]; return ["# " + p.name + " — " + p.tag, "stack: " + p.stack, ""].concat(p.body); }
+    m = f.match(/^experience\/(.+)\.log$/); if (m && JOBS[m[1]]) { var j = JOBS[m[1]]; return [j.when + "  " + j.title, j.org, ""].concat(j.body); }
+    return null;
+  }
+
+  /* =========================================================
+     TERMINAL CORE
+     ========================================================= */
+  var screen = document.getElementById("screen"), cwd = "~", hist = [], hIdx = -1, busy = false;
+  var inputLine, input, ghost;
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function ps1() { return '<span class="ps1"><span class="u">pooja</span><span class="m">@</span><span class="h">biocoderep</span><span class="m">:</span><span class="p">' + esc(cwd) + '</span><span class="dollar">$ </span></span>'; }
+  function out(html, cls) { var d = document.createElement("div"); d.className = "line" + (cls ? " " + cls : ""); d.innerHTML = html === "" ? "&nbsp;" : html; screen.insertBefore(d, inputLine || null); scrollDown(); return d; }
+  function outLines(arr, cls) { arr.forEach(function (l) { out(l, cls); }); }
+  function blank() { out(""); }
+  function scrollDown() { screen.scrollTop = screen.scrollHeight; }
+  function c(cmd, label) { return '<span class="cmd" data-run="' + esc(cmd) + '">' + esc(label || cmd) + "</span>"; }
+  function link(href, label) { return '<a class="t" href="' + esc(href) + '"' + (href.indexOf("http") === 0 ? ' target="_blank" rel="noopener"' : "") + ">" + esc(label) + "</a>"; }
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  function makeInputLine() {
+    inputLine = document.createElement("div");
+    inputLine.className = "line prompt-line";
+    inputLine.innerHTML = ps1() + '<span class="input-wrap"><span class="ghost" id="ghost"></span><input id="cmd" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Terminal input"></span>';
+    screen.appendChild(inputLine);
+    input = inputLine.querySelector("#cmd"); ghost = inputLine.querySelector("#ghost");
+    input.addEventListener("keydown", onKey);
+    input.addEventListener("input", updateGhost);
+    scrollDown();
+  }
+  function refreshPrompt() { inputLine.querySelector(".ps1").outerHTML = ps1(); }
+  function focusInput() { if (input && !busy) input.focus({ preventScroll: true }); }
+
+  function echoCommand(cmd) { out(ps1() + '<span class="typed">' + esc(cmd) + "</span>", "prompt-line"); }
+
+  async function run(raw, opts) {
+    opts = opts || {};
+    var cmd = raw.trim();
+    if (!opts.silentEcho) echoCommand(raw);
+    if (!cmd) return;
+    if (!opts.noHistory) { hist.push(cmd); hIdx = hist.length; }
+    var parts = cmd.split(/\s+/), name = parts[0].toLowerCase(), args = parts.slice(1);
+    var fn = COMMANDS[name];
+    if (name === "sudo") return sudo(args);
+    if (cmd.toLowerCase() === "nextflow run pooja" || (name === "nextflow" && args[0] === "run")) return nextflow(args);
+    if (!fn) {
+      var guess = closest(name);
+      out('<span class="rd">bash: ' + esc(name) + ": command not found</span>" + (guess ? '  <span class="m">did you mean</span> ' + c(guess) + '<span class="m">?</span>' : '  <span class="m">try</span> ' + c("help")));
+      return;
+    }
+    await fn(args);
+  }
+
+  /* =========================================================
+     COMMANDS
+     ========================================================= */
+  var HELP = [
+    ["about", "who I am"],
+    ["neofetch", "system info, bioinformatics edition"],
+    ["projects", "list my tools  ·  project <name> for details"],
+    ["experience", "positions held"],
+    ["skills", "my toolkit  ·  skills <category>"],
+    ["education", "degree"],
+    ["stats", "the numbers"],
+    ["contact", "how to reach me"],
+    ["nextflow run pooja", "run my career as a pipeline ✨"],
+    ["grep <word>", "search everything (try: grep nextflow)"],
+    ["ls · cd · cat · pwd", "browse the files"],
+    ["open <target>", "github | linkedin | email"],
+    ["history · clear", "the usual"]
+  ];
+
+  var COMMANDS = {
+    help: function () {
+      out('<span class="b">Available commands</span> <span class="m">(click any of them, or type it)</span>');
+      var h = '<div class="tbl">';
+      HELP.forEach(function (r) {
+        var key = r[0].indexOf("<") >= 0 || r[0].indexOf("·") >= 0 ? '<span class="o">' + esc(r[0]) + "</span>" : c(r[0]);
+        h += "<span>" + key + '</span><span class="m">' + esc(r[1]) + "</span>";
+      });
+      out(h + "</div>");
+    },
+    about: function () { outLines(ABOUT.map(esc)); blank(); out('<span class="m">next:</span> ' + c("projects") + '  ' + c("nextflow run pooja") + '  ' + c("contact")); },
+    whoami: function () { out("pooja  <span class=\"m\"># Pooja B N · Bioinformatics Engineer · Bengaluru</span>"); },
+    neofetch: function () { neofetch(); },
+    projects: function () {
+      out('<span class="b">~/projects</span> <span class="m">· 4 tools, built at ICAR-NIVEDI</span>');
+      blank();
+      Object.keys(PROJECTS).forEach(function (k) {
+        var p = PROJECTS[k];
+        out(c("project " + k, p.name) + " ".repeat(14 - p.name.length) + '<span class="m">' + esc(p.tag) + "</span>");
+        out('<span class="f">' + pad("", 14) + "└─ " + esc(p.stack) + "</span>");
+      });
+      blank(); out('<span class="m">tip: click a name, or type</span> <span class="o">project pathogvi</span>');
+    },
+    project: function (a) {
+      var k = (a[0] || "").toLowerCase().replace(/\.md$/, "");
+      var p = PROJECTS[k] || PROJECTS[Object.keys(PROJECTS).filter(function (x) { return x.indexOf(k) === 0 && k; })[0]];
+      if (!p) { out('<span class="rd">project: no such project “' + esc(a[0] || "") + "”</span>  try: " + Object.keys(PROJECTS).map(function (x) { return c("project " + x, x); }).join("  ")); return; }
+      out('<span class="b">' + esc(p.name) + '</span> <span class="m">— ' + esc(p.tag) + "</span>");
+      out('<span class="g">' + esc(p.stack) + '</span> <span class="f">· ' + esc(p.where) + "</span>");
+      blank();
+      p.body.forEach(function (l) { out(esc(l).replace(/^(\w[\w ]{0,10}?)(\s{2,})/, '<span class="bl">$1</span>$2')); });
+      if (p.bars) {
+        blank(); out('<span class="m">genomes analysed (NCBI)</span>');
+        var max = Math.max.apply(null, p.bars.map(function (b) { return b[1]; }));
+        p.bars.forEach(function (b) { var n = Math.max(1, Math.round(b[1] / max * 36)); out(pad(b[0], 12) + '<span class="barblk" style="width:' + n + 'ch"></span>' + b[1]); });
+      }
+    },
+    experience: function () {
+      Object.keys(JOBS).forEach(function (k, i) {
+        var j = JOBS[k]; if (i) blank();
+        out('<span class="o">' + esc(j.when) + "</span>  " + '<span class="b">' + esc(j.title) + "</span>");
+        out('<span class="g">' + esc(j.org) + "</span>");
+        j.body.forEach(function (l) { out((l.indexOf("  ") === 0 ? "  " : '<span class="m">•</span> ') + esc(l.trim())); });
+      });
+    },
+    skills: function (a) {
+      var q = (a[0] || "").toLowerCase();
+      var rows = q ? SKILLS.filter(function (s) { return s[0].indexOf(q) >= 0 || s[0].replace(/_/g, "").indexOf(q.replace(/[^a-z]/g, "")) >= 0; }) : SKILLS;
+      if (!rows.length) { out('<span class="rd">skills: no category “' + esc(q) + "”</span>  try: " + SKILLS.map(function (s) { return c("skills " + s[0], s[0]); }).join("  ")); return; }
+      out('<span class="m"># skills.yaml</span>');
+      rows.forEach(function (s) {
+        out('<span class="bl">' + esc(s[0]) + '</span><span class="m">:</span>');
+        s[1].split(/,\s*/).forEach(function (t) {
+          var lvl = t.match(/\((advanced|proficient)\)/);
+          out("  <span class=\"m\">-</span> " + esc(t.replace(/\s*\((advanced|proficient)\)/, "")) + (lvl ? '  <span class="g"># ' + lvl[1] + "</span>" : ""));
+        });
+      });
+    },
+    education: function () { outLines(fileText("education.txt").map(function (l, i) { return i === 0 ? '<span class="b">' + esc(l) + "</span>" : esc(l); })); },
+    stats: function () {
+      var rows = [["600+ Gbp", "sequencing data processed"], ["1,078", "genomes analysed"], ["~43 M", "SNPs called (+9.3 M indels)"], ["468", "bacterial genomes, 33 countries"], ["4", "research tools in active use"], ["1,322", "automated tests in G4-WATCH"]];
+      rows.forEach(function (r) { out('<span class="o b">' + pad(r[0], 10) + '</span><span class="m">' + esc(r[1]) + "</span>"); });
+    },
+    contact: function () {
+      out('<span class="b">Let\'s talk.</span> <span class="m">Open to bioinformatics engineering roles and research collaborations.</span>');
+      blank();
+      out(pad("email", 10) + link("mailto:" + EMAIL, EMAIL));
+      out(pad("github", 10) + link(GH, "github.com/biocoderep"));
+      out(pad("linkedin", 10) + link(LI, "linkedin.com/in/bnpooja"));
+      out(pad("location", 10) + "Bengaluru, India");
+    },
+    ls: function (a) {
+      var target = resolve(a.filter(function (x) { return x[0] !== "-"; })[0] || ".");
+      var node = FS[target];
+      if (!node) { if (fileText(target)) { out(esc(target.split("/").pop())); return; } out('<span class="rd">ls: cannot access \'' + esc(a[0]) + "': No such file or directory</span>"); return; }
+      out(node.children.map(function (n) {
+        var full = target + "/" + n, isDir = !!FS[full];
+        return isDir ? '<span class="dir" data-run="cd ' + esc(rel(full)) + '">' + esc(n) + "/</span>" : '<span class="file" data-run="cat ' + esc(rel(full)) + '">' + esc(n) + "</span>";
+      }).join("   "));
+    },
+    cd: function (a) {
+      var t = resolve(a[0] || "~");
+      if (!FS[t]) { out('<span class="rd">cd: ' + esc(a[0]) + ": " + (fileText(t) ? "Not a directory" : "No such file or directory") + "</span>"); return; }
+      cwd = t; refreshPrompt();
+    },
+    pwd: function () { out(cwd.replace(/^~/, "/home/pooja")); },
+    cat: function (a) {
+      if (!a.length) { out('<span class="rd">cat: missing file operand</span>  <span class="m">try</span> ' + c("cat about.txt")); return; }
+      a.forEach(function (f) {
+        var t = resolve(f), txt = fileText(t);
+        if (FS[t]) { out('<span class="rd">cat: ' + esc(f) + ": Is a directory</span>"); return; }
+        if (!txt) { out('<span class="rd">cat: ' + esc(f) + ": No such file or directory</span>"); return; }
+        txt.forEach(function (l) { out(esc(l)); });
+      });
+    },
+    grep: function (a) {
+      var flags = a.filter(function (x) { return x[0] === "-"; }), words = a.filter(function (x) { return x[0] !== "-"; });
+      var q = (words[0] || "").replace(/^["']|["']$/g, "");
+      if (!q) { out('<span class="rd">usage: grep &lt;word&gt;</span>  <span class="m">e.g.</span> ' + c("grep nextflow") + "  " + c("grep amr")); return; }
+      var re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), hits = 0;
+      allFiles().forEach(function (path) {
+        (fileText(path) || []).forEach(function (l) {
+          if (re.test(l)) { hits++; re.lastIndex = 0; out('<span class="file" data-run="cat ' + esc(rel(path)) + '"><span class="g">' + esc(rel(path)) + '</span></span><span class="m">:</span>' + esc(l).replace(re, function (m) { return '<span class="hl">' + m + "</span>"; })); }
+          re.lastIndex = 0;
+        });
+      });
+      if (!hits) out('<span class="m">(no matches for “' + esc(q) + '”)</span>');
+    },
+    open: function (a) {
+      var t = (a[0] || "").toLowerCase(), map = { github: GH, linkedin: LI, email: "mailto:" + EMAIL, mail: "mailto:" + EMAIL, };
+      if (!map[t]) { out('<span class="rd">open: unknown target “' + esc(a[0] || "") + "”</span>  try: " + ["github", "linkedin", "email"].map(function (x) { return c("open " + x, x); }).join("  ")); return; }
+      out('<span class="m">opening</span> ' + link(map[t], map[t]));
+      if (t === "email" || t === "mail") location.href = map[t]; else window.open(map[t], "_blank");
+    },
+    history: function () { hist.forEach(function (h, i) { out('<span class="f">' + pad(String(i + 1), 5) + "</span>" + c(h)); }); },
+    clear: function () { while (screen.firstChild && screen.firstChild !== inputLine) screen.removeChild(screen.firstChild); },
+    echo: function (a) { out(esc(a.join(" "))); },
+    date: function () { out(esc(new Date().toString())); },
+    uname: function () { out("PBN-OS 2026 biocoderep x86_64 GNU/Bioinformatics"); },
+    exit: function () { out('<span class="m">There is no escape from reproducibility. Try</span> ' + c("contact") + ' <span class="m">instead.</span>'); },
+    hire: function (a) { out('<span class="g">✔ Excellent choice.</span> Opening a draft email to Pooja…'); setTimeout(function () { location.href = "mailto:" + EMAIL + "?subject=" + encodeURIComponent("Hello from your terminal portfolio"); }, 600); },
+    vim: function () { out('<span class="m">You may never get out. Try</span> ' + c("cat about.txt") + '<span class="m"> instead.</span>'); },
+    rm: function () { out('<span class="rd">rm: refusing.</span> <span class="m">Everything here is version-pinned. 🙂</span>'); },
+    conda: function () { out('<span class="m">Solving environment: ⠋ …just kidding. Everything here already runs in a container.</span>'); },
+    docker: function () { out('<span class="m">CONTAINER ID   IMAGE              STATUS</span>'); out("a1b2c3d4e5f6   biocoderep/pooja   Up 2 years (healthy)"); },
+    man: function (a) { out('<span class="m">No manual entry for ' + esc(a[0] || "pooja") + ". Try</span> " + c("help") + '<span class="m">.</span>'); },
+    nextflow: function () { out('<span class="m">usage:</span> ' + c("nextflow run pooja")); }
+  };
+  COMMANDS.ll = COMMANDS.ls; COMMANDS.dir = COMMANDS.ls; COMMANDS.cls = COMMANDS.clear; COMMANDS["?"] = COMMANDS.help;
+  COMMANDS.resume = COMMANDS.cv = function () { out('<span class="m">The full CV is available on request:</span> ' + link("mailto:" + EMAIL + "?subject=" + encodeURIComponent("CV request"), EMAIL)); blank(); COMMANDS.stats(); };
+
+  function sudo(a) {
+    if (/^hire/i.test(a.join(" "))) return COMMANDS.hire(a.slice(1));
+    out('<span class="rd">[sudo] password for guest:</span> <span class="m">********</span>');
+    out('guest is not in the sudoers file. <span class="m">This incident will be reported to</span> ' + link("mailto:" + EMAIL, EMAIL) + '<span class="m">. (Or just</span> ' + c("hire pooja") + '<span class="m">.)</span>');
+  }
+
+  /* neofetch with a DNA helix */
+  function neofetch() {
+    var helix = ["A---T", " C--G", "  G-C", "  T-A", " A--T", "G---C", "C----G", "T----A", " A---T", "  G--C", "   C-G", "   A-T", "  T--A", " G---C"];
+    var pads = [2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2];
+    var art = helix.map(function (l, i) {
+      return " ".repeat(pads[i]) + l.replace(/[ACGT]/g, function (b) { return '<span class="' + b + '">' + b + "</span>"; }).replace(/-+/g, function (d) { return '<span class="f">' + d + "</span>"; });
+    }).join("\n");
+    var toolCount = SKILLS.reduce(function (n, s) { return n + s[1].split(/,\s*|;\s*/).length; }, 0);
+    var info = [
+      '<span class="u">pooja</span><span class="m">@</span><span class="h">biocoderep</span>',
+      '<span class="f">─────────────────────</span>',
+      kv("Role", "Bioinformatics Engineer"),
+      kv("Location", "Bengaluru, India"),
+      kv("Employer", "ICAR-NIVEDI"),
+      kv("Uptime", "2 years of NGS & pipelines"),
+      kv("Shell", "bash · python · java"),
+      kv("Workflows", "Nextflow DSL2 · Snakemake"),
+      kv("Containers", "Docker · Apptainer"),
+      kv("Data", "600+ Gbp · 1,078 genomes"),
+      kv("Variants", "~43 M SNPs · 9.3 M indels"),
+      kv("Packages", toolCount + " (" + '<span class="cmd" data-run="skills">skills</span>' + ")"),
+      "",
+      '<span class="blocks"><span style="background:#2f7d5b"></span><span style="background:#2f62a3"></span><span style="background:#a16207"></span><span style="background:#b4473a"></span><span style="background:#1a2238"></span><span style="background:#c2410c"></span></span>'
+    ].join("\n");
+    out('<div class="neo"><pre>' + art + "</pre><pre>" + info + "</pre></div>");
+    function kv(k, v) { return '<span class="g b">' + k + '</span><span class="m">:</span> ' + v; }
+  }
+
+  /* nextflow run pooja */
+  async function nextflow(args) {
+    if (args.length && args[0] === "run" && args[1] && args[1].toLowerCase() !== "pooja" && args[1].toLowerCase() !== "biocoderep/pooja") {
+      out('<span class="rd">ERROR ~ Cannot find a pipeline named “' + esc(args[1]) + "”</span>  try " + c("nextflow run pooja")); return;
+    }
+    busy = true; input.disabled = true;
+    var names = ["reproducible_insight", "curious_curie", "pinned_pasteur", "tested_turing", "containerised_crick"];
+    out('<span class="g b">N E X T F L O W</span>  <span class="m">~  version 24.10.0</span>');
+    out('Launching <span class="bl">`biocoderep/pooja`</span> [<span class="o">' + names[Math.random() * names.length | 0] + "</span>] DSL2 - revision: <span class=\"m\">2026</span>");
+    blank();
+    out('executor &gt;  <span class="b">local</span> (6)');
+    var procs = [
+      ["QC", "Illumina + Nanopore", "600+ Gbp processed"],
+      ["ALIGN_AND_CALL", "28 chromosomes, parallel", "~43 M SNPs · 9.3 M indels"],
+      ["HYBRID_ASSEMBLY", "10 breeds", "contig N50 up to 3.9 Mb"],
+      ["HPC_WORKFLOW", "bacterial genomics", "468 genomes · 33 countries"],
+      ["BUILD_TOOLS", "ICAR-NIVEDI", "4 tools in active use"],
+      ["CONTAINERISE", "Docker · Apptainer · CI/CD", "same input → same result"]
+    ];
+    var rows = procs.map(function (p) { return out(""); });
+    function hash() { var h = "0123456789abcdef", s = ""; for (var i = 0; i < 8; i++) s += h[Math.random() * 16 | 0]; return s.slice(0, 2) + "/" + s.slice(2); }
+    function render(i, pct, done) {
+      var p = procs[i], filled = Math.round(pct / 100 * 12);
+      rows[i].innerHTML = '<span class="f">[' + (done ? hash() : "-        ") + ']</span> process &gt; <span class="bl">' + pad(p[0], 16) + '</span><span class="m nfdesc">' + esc(pad("(" + p[1] + ")", 30)) + "</span>" +
+        '<span class="bar">' + "■".repeat(filled) + '</span><span class="f">' + "□".repeat(12 - filled) + "</span> " + pad(pct + "%", 5) +
+        (done ? '<span class="g">✔</span> <span class="o">' + esc(p[2]) + "</span>" : "");
+    }
+    procs.forEach(function (_, i) { render(i, 0, false); });
+    for (var i = 0; i < procs.length; i++) {
+      for (var pct = 0; pct <= 100; pct += 20) { render(i, pct, pct === 100); scrollDown(); await sleep(70); }
+    }
+    blank();
+    out('<span class="g">Completed at:</span> ' + esc(new Date().toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })));
+    out('<span class="g">Duration    :</span> 2y');
+    out('<span class="g">Succeeded   :</span> 6');
+    out('<span class="g">Cached      :</span> 0  <span class="m">(every run is fully reproducible)</span>');
+    blank();
+    out('<span class="m">Pipeline output is ready for review →</span> ' + c("projects") + "  " + c("contact"));
+    busy = false; input.disabled = false; focusInput();
+  }
+
+  /* =========================================================
+     HELPERS: paths, completion, fuzzy
+     ========================================================= */
+  function pad(s, n) { s = String(s); return s + " ".repeat(Math.max(1, n - s.replace(/<[^>]+>/g, "").length)); }
+  function resolve(p) {
+    if (!p || p === ".") return cwd;
+    if (p === "~" || p === "/home/pooja" || p === "/home/pooja/") return "~";
+    var base = p.indexOf("~") === 0 ? "~" : p.indexOf("/home/pooja") === 0 ? "~" : cwd;
+    var rest = p.replace(/^~\/?/, "").replace(/^\/home\/pooja\/?/, "");
+    var parts = base.split("/");
+    rest.split("/").forEach(function (seg) { if (!seg || seg === ".") return; if (seg === "..") { if (parts.length > 1) parts.pop(); } else parts.push(seg); });
+    return parts.join("/").replace(/\/$/, "");
+  }
+  function rel(full) { if (full.indexOf(cwd + "/") === 0) return full.slice(cwd.length + 1); return full; }
+  function allFiles() {
+    var outp = [];
+    Object.keys(FS).forEach(function (d) { FS[d].children.forEach(function (n) { var f = d + "/" + n; if (!FS[f]) outp.push(f); }); });
+    return outp;
+  }
+  var ALL_CMDS = ["help", "about", "neofetch", "projects", "project", "experience", "skills", "education", "stats", "contact", "nextflow run pooja", "grep", "ls", "cd", "cat", "pwd", "open", "history", "clear", "whoami", "echo", "date", "hire pooja", "sudo", "exit"];
+  function closest(w) {
+    var best = null, bd = 3;
+    ALL_CMDS.forEach(function (cand) { var cc = cand.split(" ")[0], d = lev(w, cc); if (d < bd) { bd = d; best = cand; } });
+    return best;
+  }
+  function lev(a, b) {
+    var m = [], i, j; for (i = 0; i <= b.length; i++) m[i] = [i]; for (j = 0; j <= a.length; j++) m[0][j] = j;
+    for (i = 1; i <= b.length; i++) for (j = 1; j <= a.length; j++) m[i][j] = Math.min(m[i - 1][j - 1] + (b[i - 1] === a[j - 1] ? 0 : 1), m[i][j - 1] + 1, m[i - 1][j] + 1);
+    return m[b.length][a.length];
+  }
+  function completions(v) {
+    var parts = v.split(" "), last = parts[parts.length - 1];
+    if (parts.length === 1) return ALL_CMDS.filter(function (x) { return x.indexOf(v.toLowerCase()) === 0 && v; });
+    var cmd = parts[0].toLowerCase(), pool = [];
+    if (cmd === "project") pool = Object.keys(PROJECTS);
+    else if (cmd === "skills") pool = SKILLS.map(function (s) { return s[0]; });
+    else if (cmd === "open") pool = ["github", "linkedin", "email"];
+    else if (cmd === "cat" || cmd === "cd" || cmd === "ls") {
+      var dirPart = last.indexOf("/") >= 0 ? last.slice(0, last.lastIndexOf("/") + 1) : "", node = FS[resolve(dirPart || ".")];
+      if (node) pool = node.children.map(function (n) { var full = resolve(dirPart || ".") + "/" + n; return dirPart + n + (FS[full] ? "/" : ""); });
+      if (cmd === "cd") pool = pool.filter(function (p) { return /\/$/.test(p); });
+    }
+    return pool.filter(function (p) { return p.indexOf(last) === 0; }).map(function (p) { return parts.slice(0, -1).concat(p).join(" "); });
+  }
+  function updateGhost() {
+    var v = input.value, m = v ? completions(v)[0] : null;
+    ghost.textContent = m && m !== v ? m : "";
+    ghost.style.visibility = m && m !== v ? "visible" : "hidden";
+  }
+
+  async function onKey(e) {
+    if (busy) { e.preventDefault(); return; }
+    if (e.key === "Enter") {
+      e.preventDefault(); var v = input.value; input.value = ""; updateGhost();
+      busy = true; inputLine.style.visibility = "hidden";
+      try { await run(v); } finally { busy = false; inputLine.style.visibility = ""; refreshPrompt(); scrollDown(); focusInput(); }
+    } else if (e.key === "Tab") {
+      e.preventDefault(); var opts = completions(input.value);
+      if (opts.length === 1) { input.value = opts[0] + (/\/$/.test(opts[0]) ? "" : " "); }
+      else if (opts.length > 1) {
+        var common = opts.reduce(function (a, b) { var i = 0; while (i < a.length && a[i] === b[i]) i++; return a.slice(0, i); });
+        if (common.length > input.value.length) input.value = common;
+        else { echoCommand(input.value); out(opts.map(function (o) { return '<span class="m">' + esc(o.split(" ").pop()) + "</span>"; }).join("   ")); }
+      }
+      updateGhost();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault(); if (hIdx > 0) { hIdx--; input.value = hist[hIdx]; updateGhost(); }
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault(); if (hIdx < hist.length - 1) { hIdx++; input.value = hist[hIdx]; } else { hIdx = hist.length; input.value = ""; } updateGhost();
+    } else if (e.key === "ArrowRight" && ghost.textContent && input.selectionStart === input.value.length) {
+      e.preventDefault(); input.value = ghost.textContent; updateGhost();
+    } else if (e.key === "l" && e.ctrlKey) {
+      e.preventDefault(); COMMANDS.clear();
+    } else if (e.key === "c" && e.ctrlKey && !window.getSelection().toString()) {
+      e.preventDefault(); echoCommand(input.value + "^C"); input.value = ""; updateGhost();
+    }
+  }
+
+  /* click-to-run anywhere */
+  async function clickRun(cmd) {
+    if (busy) return;
+    busy = true; inputLine.style.visibility = "hidden";
+    try { await run(cmd); } finally { busy = false; inputLine.style.visibility = ""; refreshPrompt(); scrollDown(); focusInput(); }
+  }
+  screen.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-run]");
+    if (t) { e.preventDefault(); clickRun(t.getAttribute("data-run")); return; }
+    if (!window.getSelection().toString() && !e.target.closest("a")) focusInput();
+  });
+
+  var chips = document.getElementById("chips");
+  [["help", 0], ["about", 0], ["projects", 0], ["nextflow run pooja", 1], ["skills", 0], ["experience", 0], ["grep nextflow", 0], ["contact", 0], ["clear", 0]].forEach(function (x) {
+    var b = document.createElement("button"); b.textContent = x[0]; if (x[1]) b.className = "hot";
+    b.addEventListener("click", function () { clickRun(x[0]); }); chips.appendChild(b);
+  });
+
+  /* =========================================================
+     BOOT
+     ========================================================= */
+  async function typeCommand(cmd) {
+    var line = out(ps1() + '<span class="typed"></span>', "prompt-line"), span = line.querySelector(".typed");
+    for (var i = 0; i < cmd.length; i++) { span.textContent += cmd[i]; await sleep(skip ? 0 : 55 + Math.random() * 40); }
+    await sleep(skip ? 0 : 250);
+  }
+  var skip = false;
+  async function boot() {
+    makeInputLine();
+    inputLine.style.visibility = "hidden"; busy = true;
+    var d = new Date();
+    out('<span class="m">Last login: ' + esc(d.toDateString()) + " " + d.toTimeString().slice(0, 8) + " on ttys001 from your browser</span>");
+    blank();
+    var banner = ["█▀▀▄ █▀▀▄ █▄  █", "█▄▄▀ █▀▀▄ █ ▀▄█", "█    █▄▄▀ █   █"];
+    out('<pre class="banner">' + esc(banner.join("\n")) + "</pre>");
+    blank();
+    out("Welcome! I'm <span class=\"b\">Pooja B N</span>, a bioinformatics engineer. This portfolio is a shell.");
+    out('<span class="m">Type</span> ' + c("help") + ' <span class="m">to start, click any</span> <span class="cmd">underlined</span> <span class="m">command, or try</span> ' + c("nextflow run pooja") + '<span class="m">.</span>');
+    blank();
+    await sleep(500);
+    await typeCommand("neofetch");
+    neofetch();
+    busy = false; inputLine.style.visibility = ""; scrollDown(); focusInput();
+  }
+  document.addEventListener("keydown", function () { if (busy) skip = true; }, { once: true });
+  document.getElementById("win").addEventListener("pointerdown", function () { if (busy) skip = true; });
+  boot();
+})();
+</script>
+</body>
+</html>
