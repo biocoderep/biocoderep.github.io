@@ -154,7 +154,7 @@
       bars: [["FMDV", 936], ["RABV", 532], ["SARS-CoV-2", 112]]
     },
     "pathogvi": {
-      name: "PathoGVI", tag: "Genomic Virulence Index Calculator", stack: "Docker · CLI + Web", where: "ICAR-NIVEDI",
+      name: "PathoGVI", tag: "Genomic Virulence Index Calculator", stack: "Java · Maven · Docker · CLI + Web", where: "ICAR-NIVEDI",
       body: [
         "Scores a pathogen sequence alignment on 9 indices, then combines them into a weighted",
         "composite:  GVI = Σ wᵢ · x̂ᵢ",
@@ -163,7 +163,7 @@
         "            dN/dS, genetic distance, codon adaptation, GC deviation, recombination",
         "traceable   every report shows each index's raw, normalised and weighted value",
         "consistent  CLI and web share one pipeline: same input, same score",
-        "quality     ~89% line coverage · 13-check offline self-test · Dockerised",
+        "quality     ~89% line coverage (JaCoCo) · 13-check offline self-test · Dockerised",
         "validated   avian influenza HA alignments matched published evolutionary and selection estimates",
         "applied     Kyasanur Forest Disease virus (tick-borne flavivirus, Karnataka)"
       ]
@@ -224,7 +224,7 @@
     "Hi, I'm Pooja B N, a bioinformatics engineer in Bengaluru, India.",
     "",
     "I have two years of hands-on experience in NGS analysis and pipeline development for",
-    "bacterial and viral genomes. I write production-level Python and Bash, and I package",
+    "bacterial and viral genomes. I write production-level Python, Java and Bash, and I package",
     "everything in Nextflow DSL2 or Snakemake with Docker containers, so the same input gives",
     "the same result on any machine.",
     "",
@@ -469,7 +469,7 @@
       kv("Location", "Bengaluru, India"),
       kv("Employer", "ICAR-NIVEDI"),
       kv("Uptime", "2 years of NGS & pipelines"),
-      kv("Shell", "bash · python"),
+      kv("Shell", "bash · python · java"),
       kv("Workflows", "Nextflow DSL2 · Snakemake"),
       kv("Containers", "Docker · Apptainer"),
       kv("Data", "600+ Gbp · 1,078 genomes"),
